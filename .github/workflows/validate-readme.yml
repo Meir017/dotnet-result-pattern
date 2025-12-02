@@ -1,0 +1,36 @@
+name: Validate README
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-readme:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Run README generator
+      run: dotnet run --project tools/ReadmeGenerator/ReadmeGenerator.csproj
+    
+    - name: Check for README changes
+      run: |
+        if [ -n "$(git status --porcelain README.md)" ]; then
+          echo "Error: README.md has uncommitted changes after running the generator"
+          echo "Please run the README generator and commit the changes"
+          git diff README.md
+          exit 1
+        else
+          echo "README.md is up to date"
+        fi
