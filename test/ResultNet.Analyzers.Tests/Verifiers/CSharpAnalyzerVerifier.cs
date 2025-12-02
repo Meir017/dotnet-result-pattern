@@ -40,6 +40,14 @@ public static class CSharpAnalyzerVerifier<TAnalyzer>
             
             // Support markup with diagnostic IDs for analyzers that report multiple diagnostics
             MarkupOptions = MarkupOptions.UseFirstDescriptor;
+            
+            // Use LF line endings for cross-platform compatibility
+            TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
+                root = true
+                
+                [*]
+                end_of_line = lf
+                """));
         }
 
         protected override CompilationOptions CreateCompilationOptions()
