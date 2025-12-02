@@ -1,5 +1,8 @@
 # ResultNet
 
+[![Build and Test](https://github.com/Meir017/dotnet-result-pattern/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/Meir017/dotnet-result-pattern/actions/workflows/build-and-test.yml)
+[![Validate README](https://github.com/Meir017/dotnet-result-pattern/actions/workflows/validate-readme.yml/badge.svg)](https://github.com/Meir017/dotnet-result-pattern/actions/workflows/validate-readme.yml)
+
 An opinionated, lightweight Result pattern library for .NET that embraces functional programming principles and provides comprehensive async/await support.
 
 ## Features
