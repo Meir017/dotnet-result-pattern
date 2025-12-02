@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace ResultNet.CodeFixers;
 
@@ -82,13 +83,17 @@ public class NullCoalescingAssignmentCodeFixer : CodeFixProvider
 
         var ifStatement = SyntaxFactory.IfStatement(
             condition,
-            SyntaxFactory.ExpressionStatement(simpleAssignment));
+            SyntaxFactory.ExpressionStatement(simpleAssignment))
+            .NormalizeWhitespace(eol: "\n")
+            .WithAdditionalAnnotations(Formatter.Annotation);
 
         // Replace the expression statement containing the assignment
         var expressionStatement = assignmentExpression.FirstAncestorOrSelf<ExpressionStatementSyntax>();
         if (expressionStatement != null)
         {
-            replacements[expressionStatement] = ifStatement.WithTriviaFrom(expressionStatement);
+            // Preserve leading trivia (indentation) from the original statement
+            var leadingTrivia = expressionStatement.GetLeadingTrivia();
+            replacements[expressionStatement] = ifStatement.WithLeadingTrivia(leadingTrivia);
         }
 
         // Transform parameter or variable type if needed

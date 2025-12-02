@@ -12,7 +12,8 @@ public static class CSharpAnalyzerVerifier<TAnalyzer>
     {
         var test = new Test
         {
-            TestCode = source,
+            // Normalize line endings to LF for cross-platform compatibility
+            TestCode = source.Replace("\r\n", "\n"),
         };
 
         test.ExpectedDiagnostics.AddRange(expected);

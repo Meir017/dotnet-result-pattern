@@ -31,7 +31,7 @@ internal static class CodeFixHelpers
         // If there are existing usings, insert in alphabetical order
         if (compilationUnit.Usings.Count > 0)
         {
-            usingDirective = usingDirective.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed);
+            usingDirective = usingDirective.WithTrailingTrivia(SyntaxFactory.LineFeed);
             
             // Find the correct position to insert (alphabetically)
             int insertIndex = 0;
@@ -53,8 +53,8 @@ internal static class CodeFixHelpers
 
         // No existing usings - add with a blank line after and preserve any leading trivia on first member
         usingDirective = usingDirective.WithTrailingTrivia(
-            SyntaxFactory.CarriageReturnLineFeed,
-            SyntaxFactory.CarriageReturnLineFeed);
+            SyntaxFactory.LineFeed,
+            SyntaxFactory.LineFeed);
 
         var newUsings = SyntaxFactory.SingletonList(usingDirective);
         var newCompilationUnit = compilationUnit.WithUsings(newUsings);

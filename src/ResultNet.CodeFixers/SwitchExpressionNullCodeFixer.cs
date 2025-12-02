@@ -98,7 +98,7 @@ public class SwitchExpressionNullCodeFixer : CodeFixProvider
                             SyntaxFactory.ConstantPattern(
                                 SyntaxFactory.LiteralExpression(
                                     value ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression))))))
-            .NormalizeWhitespace()
+            .NormalizeWhitespace(eol: "\n")
             .WithTriviaFrom(pattern);
 
         replacements[pattern] = propertyPattern;
