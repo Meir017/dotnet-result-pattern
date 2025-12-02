@@ -1,17 +1,20 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
+// Get the repository root (where .git folder is or fallback to 2 levels up from current directory)
+var repoRoot = FindRepositoryRoot() ?? Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", ".."));
+
 var testProjectPath = args.Length > 0 
     ? args[0] 
-    : Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "test", "ResultNet.Tests");
+    : Path.Combine(repoRoot, "test", "ResultNet.Tests");
 
 var templatePath = args.Length > 1
     ? args[1]
-    : Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "README.template.md");
+    : Path.Combine(repoRoot, "README.template.md");
 
 var outputPath = args.Length > 2
     ? args[2]
-    : Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "README.md");
+    : Path.Combine(repoRoot, "README.md");
 
 Console.WriteLine($"Test Project: {testProjectPath}");
 Console.WriteLine($"Template: {templatePath}");
@@ -34,6 +37,20 @@ await generator.GenerateAsync();
 
 Console.WriteLine($"README generated successfully: {outputPath}");
 return 0;
+
+static string? FindRepositoryRoot()
+{
+    var directory = new DirectoryInfo(Directory.GetCurrentDirectory());
+    while (directory != null)
+    {
+        if (Directory.Exists(Path.Combine(directory.FullName, ".git")))
+        {
+            return directory.FullName;
+        }
+        directory = directory.Parent;
+    }
+    return null;
+}
 
 class ReadmeGenerator
 {

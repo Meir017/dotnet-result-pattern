@@ -14,8 +14,9 @@ public static class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
     {
         var test = new Test
         {
-            TestCode = source,
-            FixedCode = fixedSource,
+            // Normalize line endings to LF for cross-platform compatibility
+            TestCode = source.Replace("\r\n", "\n"),
+            FixedCode = fixedSource.Replace("\r\n", "\n"),
         };
 
         test.ExpectedDiagnostics.AddRange(expected);
@@ -26,8 +27,9 @@ public static class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
     {
         var test = new Test
         {
-            TestCode = source,
-            FixedCode = fixedSource,
+            // Normalize line endings to LF for cross-platform compatibility
+            TestCode = source.Replace("\r\n", "\n"),
+            FixedCode = fixedSource.Replace("\r\n", "\n"),
             NumberOfFixAllIterations = numberOfFixAllIterations
         };
 
@@ -39,8 +41,9 @@ public static class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
     {
         var test = new Test
         {
-            TestCode = source,
-            FixedCode = fixedSource,
+            // Normalize line endings to LF for cross-platform compatibility
+            TestCode = source.Replace("\r\n", "\n"),
+            FixedCode = fixedSource.Replace("\r\n", "\n"),
         };
 
         test.ExpectedDiagnostics.Add(expected);
@@ -68,6 +71,14 @@ public static class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
             
             // Support markup with diagnostic IDs for analyzers that report multiple diagnostics
             MarkupOptions = MarkupOptions.UseFirstDescriptor;
+            
+            // Use LF line endings for cross-platform compatibility
+            TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
+                root = true
+                
+                [*]
+                end_of_line = lf
+                """));
         }
 
         protected override CompilationOptions CreateCompilationOptions()

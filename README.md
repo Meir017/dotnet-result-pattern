@@ -104,47 +104,47 @@ public readonly struct Result<T, TCode> where TCode : struct, Enum
 ## ### Simple Validation
 
 ```csharp
-Result<int> ValidateAge(int age)
-{
-    if (age < 0)
-        return Result<int>.Failure("Age cannot be negative");
-    if (age > 150)
-        return Result<int>.Failure("Age cannot exceed 150");
-    return Result<int>.Success(age);
-}
-var validAge = ValidateAge(25);
+Result<int> ValidateAge(int age)
+{
+    if (age < 0)
+        return Result<int>.Failure("Age cannot be negative");
+    if (age > 150)
+        return Result<int>.Failure("Age cannot exceed 150");
+    return Result<int>.Success(age);
+}
+var validAge = ValidateAge(25);
 var invalidAge = ValidateAge(-5);
 ```
 
 ### Implicit Conversions
 
 ```csharp
-Result<int> GetUserId(string username)
-{
-    if (string.IsNullOrEmpty(username))
-        return new Error("Validation", "Username is required");
-    if (username == "admin")
-        return 1;
-    return new Error("NotFound", "User not found");
-}
-var adminResult = GetUserId("admin");
+Result<int> GetUserId(string username)
+{
+    if (string.IsNullOrEmpty(username))
+        return new Error("Validation", "Username is required");
+    if (username == "admin")
+        return 1;
+    return new Error("NotFound", "User not found");
+}
+var adminResult = GetUserId("admin");
 var notFoundResult = GetUserId("unknown");
 ```
 
 ### Matching Patterns
 
 ```csharp
-Result<int> Divide(int numerator, int denominator)
-{
-    if (denominator == 0)
-        return Result<int>.Failure("Division by zero");
-    return Result<int>.Success(numerator / denominator);
-}
-var successMessage = Divide(10, 2).Match(
-    onSuccess: value => $"Result: {value}",
-    onFailure: error => $"Error: {error.Message}");
-var failureMessage = Divide(10, 0).Match(
-    onSuccess: value => $"Result: {value}",
+Result<int> Divide(int numerator, int denominator)
+{
+    if (denominator == 0)
+        return Result<int>.Failure("Division by zero");
+    return Result<int>.Success(numerator / denominator);
+}
+var successMessage = Divide(10, 2).Match(
+    onSuccess: value => $"Result: {value}",
+    onFailure: error => $"Error: {error.Message}");
+var failureMessage = Divide(10, 0).Match(
+    onSuccess: value => $"Result: {value}",
     onFailure: error => $"Error: {error.Message}");
 ```
 
@@ -153,44 +153,44 @@ var failureMessage = Divide(10, 0).Match(
 ## ### Chaining Operations
 
 ```csharp
-var result = Result<string>.Success("  hello world  ")
-    .Map(s => s.Trim())
-    .Map(s => s.ToUpper())
-    .Ensure(s => s.Length > 0, "String cannot be empty")
+var result = Result<string>.Success("  hello world  ")
+    .Map(s => s.Trim())
+    .Map(s => s.ToUpper())
+    .Ensure(s => s.Length > 0, "String cannot be empty")
     .Map(s => $"Message: {s}");
 ```
 
 ### Error Propagation
 
 ```csharp
-var result = Result<string>.Success("test")
-    .Map(s => s.ToUpper())
-    .Bind(s => Result<int>.Failure("Something went wrong"))
+var result = Result<string>.Success("test")
+    .Map(s => s.ToUpper())
+    .Bind(s => Result<int>.Failure("Something went wrong"))
     .Map(i => i * 2);
 ```
 
 ### Railway Oriented Programming
 
 ```csharp
-Result<string> ValidateInput(string input) =>
-    string.IsNullOrWhiteSpace(input)
-        ? Result<string>.Failure("Input is required")
-        : Result<string>.Success(input);
-Result<string> Normalize(string input) =>
-    Result<string>.Success(input.Trim().ToLower());
-Result<int> ConvertToNumber(string input) =>
-    Results.Try(() => int.Parse(input));
-Result<int> EnsurePositive(int number) =>
-    number > 0
-        ? Result<int>.Success(number)
-        : Result<int>.Failure("Number must be positive");
-var successPipeline = ValidateInput("  42  ")
-    .Bind(Normalize)
-    .Bind(ConvertToNumber)
-    .Bind(EnsurePositive);
-var failurePipeline = ValidateInput("  -5  ")
-    .Bind(Normalize)
-    .Bind(ConvertToNumber)
+Result<string> ValidateInput(string input) =>
+    string.IsNullOrWhiteSpace(input)
+        ? Result<string>.Failure("Input is required")
+        : Result<string>.Success(input);
+Result<string> Normalize(string input) =>
+    Result<string>.Success(input.Trim().ToLower());
+Result<int> ConvertToNumber(string input) =>
+    Results.Try(() => int.Parse(input));
+Result<int> EnsurePositive(int number) =>
+    number > 0
+        ? Result<int>.Success(number)
+        : Result<int>.Failure("Number must be positive");
+var successPipeline = ValidateInput("  42  ")
+    .Bind(Normalize)
+    .Bind(ConvertToNumber)
+    .Bind(EnsurePositive);
+var failurePipeline = ValidateInput("  -5  ")
+    .Bind(Normalize)
+    .Bind(ConvertToNumber)
     .Bind(EnsurePositive);
 ```
 
@@ -199,15 +199,15 @@ var failurePipeline = ValidateInput("  -5  ")
 ## ### Exception Handling
 
 ```csharp
-var successResult = Results.Try(() => int.Parse("42"));
+var successResult = Results.Try(() => int.Parse("42"));
 var failureResult = Results.Try(() => int.Parse("not a number"));
 ```
 
 ### Custom Error Mapping
 
 ```csharp
-var result = Results.Try(
-    () => int.Parse("invalid"),
+var result = Results.Try(
+    () => int.Parse("invalid"),
     ex => new Error("ParseError", $"Failed to parse: {ex.Message}"));
 ```
 
@@ -216,19 +216,19 @@ var result = Results.Try(
 ## ### Default Values
 
 ```csharp
-var successResult = Result<int>.Success(42);
-var failureResult = Result<int>.Failure("error");
-var value1 = successResult.ValueOr(0);
+var successResult = Result<int>.Success(42);
+var failureResult = Result<int>.Failure("error");
+var value1 = successResult.ValueOr(0);
 var value2 = failureResult.ValueOr(0);
 ```
 
 ### Side Effects
 
 ```csharp
-var logMessages = new List<string>();
-Result<int>.Success(42)
-    .Tap(value => logMessages.Add($"Processing: {value}"))
-    .Map(x => x * 2)
+var logMessages = new List<string>();
+Result<int>.Success(42)
+    .Tap(value => logMessages.Add($"Processing: {value}"))
+    .Map(x => x * 2)
     .Tap(value => logMessages.Add($"Result: {value}"));
 ```
 
@@ -237,37 +237,37 @@ Result<int>.Success(42)
 ## ### Combining Validations
 
 ```csharp
-Result ValidateUsername(string username) =>
-    string.IsNullOrWhiteSpace(username)
-        ? Result.Failure("Username is required")
-        : Result.Success();
-Result ValidatePassword(string password) =>
-    password.Length < 8
-        ? Result.Failure("Password must be at least 8 characters")
-        : Result.Success();
-Result ValidateEmail(string email) =>
-    !email.Contains('@')
-        ? Result.Failure("Invalid email format")
-        : Result.Success();
-var allValid = Results.Combine(
-    ValidateUsername("john"),
-    ValidatePassword("password123"),
-    ValidateEmail("john@example.com"));
-var hasFailure = Results.Combine(
-    ValidateUsername("john"),
-    ValidatePassword("short"),
+Result ValidateUsername(string username) =>
+    string.IsNullOrWhiteSpace(username)
+        ? Result.Failure("Username is required")
+        : Result.Success();
+Result ValidatePassword(string password) =>
+    password.Length < 8
+        ? Result.Failure("Password must be at least 8 characters")
+        : Result.Success();
+Result ValidateEmail(string email) =>
+    !email.Contains('@')
+        ? Result.Failure("Invalid email format")
+        : Result.Success();
+var allValid = Results.Combine(
+    ValidateUsername("john"),
+    ValidatePassword("password123"),
+    ValidateEmail("john@example.com"));
+var hasFailure = Results.Combine(
+    ValidateUsername("john"),
+    ValidatePassword("short"),
     ValidateEmail("john@example.com"));
 ```
 
 ### Collecting Multiple Values
 
 ```csharp
-Result<int> GetUserId() => 1;
-Result<int> GetDepartmentId() => 2;
-Result<int> GetRoleId() => 3;
-var combined = Results.CombineAll(
-    GetUserId(),
-    GetDepartmentId(),
+Result<int> GetUserId() => 1;
+Result<int> GetDepartmentId() => 2;
+Result<int> GetRoleId() => 3;
+var combined = Results.CombineAll(
+    GetUserId(),
+    GetDepartmentId(),
     GetRoleId());
 ```
 
@@ -276,28 +276,28 @@ var combined = Results.CombineAll(
 ## ### Async Operations
 
 ```csharp
-async Task<int> FetchUserIdAsync(string username)
-{
-    await Task.Delay(1);
-    return username == "admin" ? 1 : throw new Exception("User not found");
-}
-var result = await Results.TryAsync(() => FetchUserIdAsync("admin"))
-    .MapAsync(id => id * 10)
+async Task<int> FetchUserIdAsync(string username)
+{
+    await Task.Delay(1);
+    return username == "admin" ? 1 : throw new Exception("User not found");
+}
+var result = await Results.TryAsync(() => FetchUserIdAsync("admin"))
+    .MapAsync(id => id * 10)
     .TapAsync(async id => await Task.Delay(1));
 ```
 
 ### Async Pipeline
 
 ```csharp
-async Task<string> LoadDataAsync() => await Task.FromResult("raw data");
-async Task<string> ProcessDataAsync(string data) => await Task.FromResult(data.ToUpper());
-async Task SaveDataAsync(string data) => await Task.Delay(1);
-var result = await Results.TryAsync(LoadDataAsync)
-    .BindAsync(async data => 
-    {
-        var processed = await ProcessDataAsync(data);
-        return Result<string>.Success(processed);
-    })
+async Task<string> LoadDataAsync() => await Task.FromResult("raw data");
+async Task<string> ProcessDataAsync(string data) => await Task.FromResult(data.ToUpper());
+async Task SaveDataAsync(string data) => await Task.Delay(1);
+var result = await Results.TryAsync(LoadDataAsync)
+    .BindAsync(async data => 
+    {
+        var processed = await ProcessDataAsync(data);
+        return Result<string>.Success(processed);
+    })
     .TapAsync(SaveDataAsync);
 ```
 
@@ -306,54 +306,54 @@ var result = await Results.TryAsync(LoadDataAsync)
 ## ### Using Enum Error Codes
 
 ```csharp
-Result<string, UserErrorCode> AuthenticateUser(string username, string password)
-{
-    if (string.IsNullOrEmpty(username))
-        return Result<string, UserErrorCode>.Failure(
-            UserErrorCode.ValidationFailed, 
-            "Username is required");
-    if (username != "admin")
-        return Result<string, UserErrorCode>.Failure(
-            UserErrorCode.NotFound, 
-            "User not found");
-    if (password != "secret")
-        return Result<string, UserErrorCode>.Failure(
-            UserErrorCode.InvalidCredentials, 
-            "Invalid password");
-    return Result<string, UserErrorCode>.Success("token-12345");
-}
-var successResult = AuthenticateUser("admin", "secret");
+Result<string, UserErrorCode> AuthenticateUser(string username, string password)
+{
+    if (string.IsNullOrEmpty(username))
+        return Result<string, UserErrorCode>.Failure(
+            UserErrorCode.ValidationFailed, 
+            "Username is required");
+    if (username != "admin")
+        return Result<string, UserErrorCode>.Failure(
+            UserErrorCode.NotFound, 
+            "User not found");
+    if (password != "secret")
+        return Result<string, UserErrorCode>.Failure(
+            UserErrorCode.InvalidCredentials, 
+            "Invalid password");
+    return Result<string, UserErrorCode>.Success("token-12345");
+}
+var successResult = AuthenticateUser("admin", "secret");
 var notFoundResult = AuthenticateUser("john", "secret");
 ```
 
 ### Typed Error Codes With Implicit Conversion
 
 ```csharp
-Result<int, UserErrorCode> GetUserAge(string username)
-{
-    if (string.IsNullOrEmpty(username))
-        return Result<int, UserErrorCode>.Failure("Username is required");
-    if (username == "john")
-        return 30;
-    var error = new Error<UserErrorCode>(UserErrorCode.NotFound, "User not found");
-    return error;
-}
-var successResult = GetUserAge("john");
+Result<int, UserErrorCode> GetUserAge(string username)
+{
+    if (string.IsNullOrEmpty(username))
+        return Result<int, UserErrorCode>.Failure("Username is required");
+    if (username == "john")
+        return 30;
+    var error = new Error<UserErrorCode>(UserErrorCode.NotFound, "User not found");
+    return error;
+}
+var successResult = GetUserAge("john");
 var failureResult = GetUserAge("unknown");
 ```
 
 ### Typed Error Codes With Exception Handling
 
 ```csharp
-var successResult = Results.Try<int, UserErrorCode>(
-    () => int.Parse("42"),
-    ex => new Error<UserErrorCode>(
-        UserErrorCode.ValidationFailed, 
-        $"Parse error: {ex.Message}"));
-var failureResult = Results.Try<int, UserErrorCode>(
-    () => int.Parse("invalid"),
-    ex => new Error<UserErrorCode>(
-        UserErrorCode.ValidationFailed, 
+var successResult = Results.Try<int, UserErrorCode>(
+    () => int.Parse("42"),
+    ex => new Error<UserErrorCode>(
+        UserErrorCode.ValidationFailed, 
+        $"Parse error: {ex.Message}"));
+var failureResult = Results.Try<int, UserErrorCode>(
+    () => int.Parse("invalid"),
+    ex => new Error<UserErrorCode>(
+        UserErrorCode.ValidationFailed, 
         $"Parse error: {ex.Message}"));
 ```
 
@@ -362,21 +362,21 @@ var failureResult = Results.Try<int, UserErrorCode>(
 ## ### Early Return Pattern
 
 ```csharp
-Result<string> ProcessOrder(int orderId)
-{
-    var orderResult = GetOrder(orderId);
-    if (orderResult.IsFailure)
-        return orderResult.Error;
-    var validationResult = ValidateOrder(orderResult.Value);
-    if (validationResult.IsFailure)
-        return validationResult.Error;
-    return Result<string>.Success($"Order {orderId} processed");
-}
-Result<string> GetOrder(int id) =>
-    id > 0 ? Result<string>.Success($"Order{id}") : Result<string>.Failure("Invalid order ID");
-Result ValidateOrder(string order) =>
-    order.Contains("Order") ? Result.Success() : Result.Failure("Invalid order format");
-var result = ProcessOrder(123);
+Result<string> ProcessOrder(int orderId)
+{
+    var orderResult = GetOrder(orderId);
+    if (orderResult.IsFailure)
+        return orderResult.Error;
+    var validationResult = ValidateOrder(orderResult.Value);
+    if (validationResult.IsFailure)
+        return validationResult.Error;
+    return Result<string>.Success($"Order {orderId} processed");
+}
+Result<string> GetOrder(int id) =>
+    id > 0 ? Result<string>.Success($"Order{id}") : Result<string>.Failure("Invalid order ID");
+Result ValidateOrder(string order) =>
+    order.Contains("Order") ? Result.Success() : Result.Failure("Invalid order format");
+var result = ProcessOrder(123);
 var invalidResult = ProcessOrder(-1);
 ```
 
