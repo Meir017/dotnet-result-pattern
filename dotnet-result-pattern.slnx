@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ResultNet.Analyzers/ResultNet.Analyzers.csproj" />
+    <Project Path="src/ResultNet.CodeFixers/ResultNet.CodeFixers.csproj" />
+    <Project Path="src/ResultNet/ResultNet.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/ResultNet.Tests/ResultNet.Tests.csproj" />
+    <Project Path="test/ResultNet.Analyzers.Tests/ResultNet.Analyzers.Tests.csproj" />
+  </Folder>
+</Solution>

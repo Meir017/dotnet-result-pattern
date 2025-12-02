@@ -1,0 +1,35 @@
+<Project>
+
+  <PropertyGroup>
+    <!-- Common properties for all projects -->
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    
+    <!-- Treat warnings as errors -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    
+    <!-- Exclude package compatibility warnings from being treated as errors -->
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU1701</WarningsNotAsErrors>
+    
+    <!-- Enable deterministic builds -->
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+    
+    <!-- Enable code analysis -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest</AnalysisLevel>
+  </PropertyGroup>
+
+  <!-- Analyzer-specific properties -->
+  <PropertyGroup Condition="$(MSBuildProjectName.Contains('Analyzer'))">
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+  </PropertyGroup>
+
+  <!-- Test project properties -->
+  <PropertyGroup Condition="$(MSBuildProjectName.Contains('Tests'))">
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+</Project>
