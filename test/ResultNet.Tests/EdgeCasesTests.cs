@@ -184,7 +184,7 @@ public class EdgeCasesTests
     [Fact]
     public async Task TryAsync_WithSynchronousException_CatchesException()
     {
-        var result = await Results.TryAsync<int>(async () =>
+        var result = await Results.TryAsync<int>(() =>
         {
             throw new InvalidOperationException("Immediate exception");
         });

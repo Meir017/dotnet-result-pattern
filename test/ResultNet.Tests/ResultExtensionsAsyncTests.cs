@@ -206,11 +206,11 @@ public class ResultExtensionsAsyncTests
         }
 
         var result = await Results.TryAsync(() => FetchUserIdAsync("admin"))
-            .BindAsync(async userId =>
+            .BindAsync(userId =>
             {
                 if (userId <= 0)
-                    return Result<int>.Failure("User not found");
-                return Result<int>.Success(userId);
+                    return Task.FromResult(Result<int>.Failure("User not found"));
+                return Task.FromResult(Result<int>.Success(userId));
             })
             .BindAsync(async userId =>
             {
