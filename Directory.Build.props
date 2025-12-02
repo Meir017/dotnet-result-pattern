@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     
-    <!-- Treat warnings as errors (disabled in CI for troubleshooting) -->
-    <TreatWarningsAsErrors Condition="'$(CI)' != 'true'">true</TreatWarningsAsErrors>
+    <!-- Treat warnings as errors -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     
     <!-- Exclude package compatibility warnings from being treated as errors -->
     <WarningsNotAsErrors>$(WarningsNotAsErrors);NU1701</WarningsNotAsErrors>

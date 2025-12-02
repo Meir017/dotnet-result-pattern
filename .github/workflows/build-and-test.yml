@@ -17,10 +17,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        global-json-file: global.json
+    - name: Install .NET 10 Preview
+      run: |
+        curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --version 10.0.100
+        echo "$HOME/.dotnet" >> $GITHUB_PATH
+      shell: bash
     
     - name: Restore dependencies
       run: dotnet restore
