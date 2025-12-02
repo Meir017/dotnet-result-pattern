@@ -9,22 +9,21 @@ on:
 jobs:
   validate-readme:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '10.x'
-        dotnet-quality: 'preview'
-    
+        global-json-file: global.json
+
     - name: Restore dependencies
       run: dotnet restore
-    
+
     - name: Run README generator
       run: dotnet run --project tools/ReadmeGenerator/ReadmeGenerator.csproj
-    
+
     - name: Check for README changes
       run: |
         if [ -n "$(git status --porcelain README.md)" ]; then
